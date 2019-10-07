@@ -2,15 +2,17 @@ import requests
 from bs4 import BeautifulSoup
 import sys
 
-#exclude = ['/wiki/Alphabet_phon%C3%A9tique_international', '/wiki/Aide:Homonymie', '/wiki/Latin', '/wiki/Aide:R%C3%A9f%C3%A9rence_n%C3%A9cessaire', '/wiki/Grec']
 visited = []
+
 def findLink(liens):
 	zob = open("exclude.txt", "r+")
 	zoblines = zob.readlines()
-	
+	nopes = []
+	for line in zoblines:
+		nopes.append(line.strip())
+
 	for lien in liens:
-		if not lien in zoblines and lien[0] != '#':
-			zoblines
+		if not lien in nopes and lien[0] != '#':
 			return lien
 
 	return None
@@ -19,25 +21,26 @@ def findTags(tags):
 	links = []
 	for tag in tags:
 		found = tag.findAll('a')
+
 		for link in found:
-			links.append(link['href'])
-			
+			if link.has_attr('href'):
+				links.append(link['href'])
+
 	if len(links) > 0 :
 		lien = findLink(links)
 		print('Lien suivant:', lien)
 		return lien
 
-
+#mots qui plantent: Homo
 def recursmort(adresse):
 	visited.append(adresse)
 	htmlEnVrac = requests.get('https://fr.wikipedia.org'+adresse).content
 	soup = BeautifulSoup(htmlEnVrac, 'html.parser')
 	laDiv = soup.find('div', {'class': "mw-parser-output"})
-	potentialTags = laDiv.findAll(['p', 'li'], {'class': ''}, recursive=False)
+	potentialTags = laDiv.findAll(['p', 'ul'], {'class': ''}, recursive=False)
 	tag = findTags(potentialTags)
 
 	if tag == '/wiki/Philosophie':
-
 		print('On a trouvé Philo en ' + str(len(visited)) + ' coups !')
 	elif tag != None:
 		recursmort(tag)

@@ -3,3 +3,6 @@
 /wiki/Latin
 /wiki/Aide:R%C3%A9f%C3%A9rence_n%C3%A9cessaire
 /wiki/Grec
+/wiki/Grec_ancien
+/wiki/%CE%9C%CE%B7%CF%87%CE%B1%CE%BD%CE%B9%CE%BA%CE%AE
+/wiki/%CE%BB%CE%BF%CE%B3%CE%B9%CE%BA%CE%AE
