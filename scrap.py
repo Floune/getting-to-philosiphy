@@ -2,12 +2,15 @@ import requests
 from bs4 import BeautifulSoup
 import sys
 
-exclude = ['/wiki/Alphabet_phon%C3%A9tique_international', '/wiki/Aide:Homonymie']
+#exclude = ['/wiki/Alphabet_phon%C3%A9tique_international', '/wiki/Aide:Homonymie', '/wiki/Latin', '/wiki/Aide:R%C3%A9f%C3%A9rence_n%C3%A9cessaire', '/wiki/Grec']
 visited = []
 def findLink(liens):
+	zob = open("exclude.txt", "r+")
+	zoblines = zob.readlines()
+	
 	for lien in liens:
-		if not lien in exclude and lien[0] != '#':
-			exclude.append(lien)
+		if not lien in zoblines and lien[0] != '#':
+			zoblines
 			return lien
 
 	return None
@@ -34,7 +37,7 @@ def recursmort(adresse):
 	tag = findTags(potentialTags)
 
 	if tag == '/wiki/Philosophie':
-		print(visited)
+
 		print('On a trouvé Philo en ' + str(len(visited)) + ' coups !')
 	elif tag != None:
 		recursmort(tag)
