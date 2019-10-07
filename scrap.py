@@ -14,7 +14,7 @@ def findLink(liens):
 		nopes.append(line.strip())
 
 	for lien in liens:
-		if not lien in visited and not lien in nopes and lien[0] != '#' and lien[:14] != '/wiki/Fichier:':
+		if not lien in visited and not lien in nopes and lien[0] != '#':
 			return lien
 
 	return None
@@ -30,7 +30,7 @@ def findTags(tags):
 
 	if len(links) > 0 :
 		lien = findLink(links)
-		print('Lien suivant:', lien)
+		print(lien[6:])
 		return lien
 
 def recursmort(adresse):
@@ -42,7 +42,9 @@ def recursmort(adresse):
 	tag = findTags(potentialTags)
 
 	if tag == '/wiki/Philosophie':
-		filsDeJ = open("filsDeJ.txt", "w+")
+		filsDeJ = open("data-pures/" + sys.argv[1] + ".json", "w+")
+		json.dump(visited, filsDeJ)
+		filsDeJ.close()
 		print('On a trouvé Philo en ' + str(len(visited)) + ' coups !')
 	elif tag != None:
 		recursmort(tag)
@@ -51,8 +53,12 @@ def recursmort(adresse):
 		print('Cest la fin apres ' + str(len(visited)))
 
 
+def start():
+	if len(sys.argv) <= 1:
+		print('Argument missing')
+		print('Exiting...')
+		exit()
+	value = '/wiki/' + sys.argv[1]
+	recursmort(value)
 
-value = '/wiki/'+sys.argv[1]
-
-recursmort(value)
-
+start()
