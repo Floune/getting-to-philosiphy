@@ -1,18 +1,20 @@
 import requests
 from bs4 import BeautifulSoup
 import sys
+import json
 
 visited = []
 
 def findLink(liens):
 	zob = open("exclude.txt", "r+")
 	zoblines = zob.readlines()
+	zob.close();
 	nopes = []
 	for line in zoblines:
 		nopes.append(line.strip())
 
 	for lien in liens:
-		if not lien in nopes and lien[0] != '#':
+		if not lien in visited and not lien in nopes and lien[0] != '#' and lien[:14] != '/wiki/Fichier:':
 			return lien
 
 	return None
@@ -31,7 +33,6 @@ def findTags(tags):
 		print('Lien suivant:', lien)
 		return lien
 
-#mots qui plantent: Homo
 def recursmort(adresse):
 	visited.append(adresse)
 	htmlEnVrac = requests.get('https://fr.wikipedia.org'+adresse).content
@@ -41,6 +42,7 @@ def recursmort(adresse):
 	tag = findTags(potentialTags)
 
 	if tag == '/wiki/Philosophie':
+		filsDeJ = open("filsDeJ.txt", "w+")
 		print('On a trouvé Philo en ' + str(len(visited)) + ' coups !')
 	elif tag != None:
 		recursmort(tag)
