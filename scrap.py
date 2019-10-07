@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import sys
+import urllib.parse
 
 exclude = ['/wiki/Alphabet_phon%C3%A9tique_international', '/wiki/Aide:Homonymie']
 visited = []
@@ -21,7 +22,7 @@ def findTags(tags):
 			
 	if len(links) > 0 :
 		lien = findLink(links)
-		print('Lien suivant:', lien)
+		print('Lien suivant:', clean(lien))
 		return lien
 
 
@@ -34,7 +35,6 @@ def recursmort(adresse):
 	tag = findTags(potentialTags)
 
 	if tag == '/wiki/Philosophie':
-		print(visited)
 		print('On a trouvé Philo en ' + str(len(visited)) + ' coups !')
 	elif tag != None:
 		recursmort(tag)
@@ -42,9 +42,11 @@ def recursmort(adresse):
 		print(visited)
 		print('Cest la fin apres ' + str(len(visited)))
 
+def clean(uri):
+	return urllib.parse.unquote_plus(uri).replace('/wiki/', '')
 
+def cli():
+	value = '/wiki/'+sys.argv[1]
+	recursmort(value)
 
-value = '/wiki/'+sys.argv[1]
-
-recursmort(value)
-
+cli()
