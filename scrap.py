@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import sys
+import wikipedia
 import json
 
 visited = []
@@ -33,8 +34,19 @@ def findTags(tags):
 		print(lien[6:])
 		return lien
 
+def saveSuccess():
+	file = open('data-pures/results.json', 'r+')
+	stored = file.read()
+	storedJson = json.loads(stored)
+	storedJson['words'].append({search : visited})
+	current = json.dumps(storedJson)
+	file.seek(0)
+	file.write(current)
+	file.truncate()
+	file.close()
+
 def recursmort(adresse):
-	visited.append(adresse)
+	visited.append(adresse[6:] + '\n')
 	htmlEnVrac = requests.get('https://fr.wikipedia.org'+adresse).content
 	soup = BeautifulSoup(htmlEnVrac, 'html.parser')
 	laDiv = soup.find('div', {'class': "mw-parser-output"})
@@ -42,14 +54,14 @@ def recursmort(adresse):
 	tag = findTags(potentialTags)
 
 	if tag == '/wiki/Philosophie':
-		filsDeJ = open("data-pures/" + sys.argv[1] + ".json", "w+")
-		json.dump(visited, filsDeJ)
-		filsDeJ.close()
+		# filsDeJ = open("data-pures/" + sys.argv[1] + ".json", "w+")
+		# json.dump(visited, filsDeJ)
+		# filsDeJ.close()
+		saveSuccess()
 		print('On a trouvé Philo en ' + str(len(visited)) + ' coups !')
 	elif tag != None:
 		recursmort(tag)
 	else:
-		print(visited)
 		print('Cest la fin apres ' + str(len(visited)))
 
 
@@ -58,7 +70,9 @@ def start():
 		print('Argument missing')
 		print('Exiting...')
 		exit()
-	value = '/wiki/' + sys.argv[1]
+	global search
+	search = sys.argv[1]
+	value = '/wiki/' + search
 	recursmort(value)
 
 start()
