@@ -4,9 +4,7 @@ import sys
 import json
 from flask import jsonify
 
-visited = []
-
-def findLink(liens):
+def findLink(liens, visited):
 	zob = open("app/exclude.txt", "r+")
 	zoblines = zob.readlines()
 	zob.close();
@@ -20,7 +18,7 @@ def findLink(liens):
 
 	return None
 
-def findTags(tags):
+def findTags(tags, visited):
 	links = []
 	for tag in tags:
 		found = tag.findAll('a')
@@ -30,11 +28,11 @@ def findTags(tags):
 				links.append(link['href'])
 
 	if len(links) > 0 :
-		lien = findLink(links)
+		lien = findLink(links, visited)
 		print(lien[6:])
 		return lien
 
-def saveSuccess():
+def saveSuccess(visited):
 	file = open('data-pures/results.json', 'r+')
 	stored = file.read()
 	storedJson = json.loads(stored)
@@ -45,29 +43,30 @@ def saveSuccess():
 	file.truncate()
 	file.close()
 
-def recursmort(adresse):
+def recursmort(adresse, visited):
 	visited.append(adresse)
 	htmlEnVrac = requests.get('https://fr.wikipedia.org'+adresse).content
 	soup = BeautifulSoup(htmlEnVrac, 'html.parser')
 	laDiv = soup.find('div', {'class': "mw-parser-output"})
 	potentialTags = laDiv.findAll(['p', 'ul'], {'class': ''}, recursive=False)
-	tag = findTags(potentialTags)
+	tag = findTags(potentialTags, visited)
 
 	if tag == '/wiki/Philosophie':
 		# filsDeJ = open("data-pures/" + sys.argv[1] + ".json", "w+")
 		# json.dump(visited, filsDeJ)
 		# filsDeJ.close()
-		saveSuccess()
+		saveSuccess(visited)
 		print('On a trouvé Philo en ' + str(len(visited)) + ' coups !')
 	elif tag != None:
-		recursmort(tag)
+		recursmort(tag, visited)
 	else:
 		print('Cest la fin apres ' + str(len(visited)))
 
 
 def start(word):
+	visited = []
 	global search
 	search = word
 	value = '/wiki/' + word
-	response = recursmort(value)
+	response = recursmort(value, visited)
 	return visited
