@@ -13,7 +13,8 @@ def findLink(liens, visited):
 		nopes.append(line.strip())
 
 	for lien in liens:
-		if not lien in visited and not lien in nopes and lien[0] != '#':
+		print(lien)
+		if not lien in visited and not lien in nopes and lien[0] != '#' and not "/wiki/Aide" in lien and not "/wiki/API_" in lien:
 			return lien
 
 	return None
@@ -52,9 +53,6 @@ def recursmort(adresse, visited):
 	tag = findTags(potentialTags, visited)
 
 	if tag == '/wiki/Philosophie':
-		# filsDeJ = open("data-pures/" + sys.argv[1] + ".json", "w+")
-		# json.dump(visited, filsDeJ)
-		# filsDeJ.close()
 		saveSuccess(visited)
 		print('On a trouvé Philo en ' + str(len(visited)) + ' coups !')
 	elif tag != None:
@@ -64,9 +62,17 @@ def recursmort(adresse, visited):
 
 
 def start(word):
+	if testWord(word) == 1: return ["entrée inexistante"]
 	visited = []
 	global search
 	search = word
 	value = '/wiki/' + word
 	response = recursmort(value, visited)
 	return visited
+
+def testWord(word):
+	adress = 'https://fr.wikipedia.org/wiki/' + word
+	htmlEnVrac = requests.get(adress).content
+	soup = BeautifulSoup(htmlEnVrac, 'html.parser')
+	notFound = soup.body.findAll(text="Wikipédia ne possède pas d'article avec ce nom.")
+	return len(notFound)

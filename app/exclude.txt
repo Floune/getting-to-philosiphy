@@ -1,5 +1,7 @@
 /wiki/Alphabet_phon%C3%A9tique_international
 /wiki/Aide:Homonymie
+/wiki/API_p
+/wiki/Aide:Japonais
 /wiki/Latin
 /wiki/Aide:R%C3%A9f%C3%A9rence_n%C3%A9cessaire
 /wiki/Grec
